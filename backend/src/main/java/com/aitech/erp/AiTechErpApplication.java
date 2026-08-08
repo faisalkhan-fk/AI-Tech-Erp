@@ -1,0 +1,13 @@
+package com.aitech.erp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class AiTechErpApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(AiTechErpApplication.class, args);
+	}
+
+}
