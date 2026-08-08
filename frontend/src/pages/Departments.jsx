@@ -20,7 +20,7 @@ export default function Departments() {
 
   const fetchDepartments = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/departments`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/departments`, getAuthHeader());
       setDepartments(res.data);
     } catch (err) {
       console.error(err);
@@ -30,7 +30,7 @@ export default function Departments() {
   const handleAddDepartment = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/departments`, { name }, getAuthHeader());
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/departments`, { name }, getAuthHeader());
       setShowModal(false);
       setName('');
       fetchDepartments();
@@ -41,7 +41,7 @@ export default function Departments() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/departments/${id}`, getAuthHeader());
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/departments/${id}`, getAuthHeader());
       fetchDepartments();
     } catch (err) {
       console.error(err);

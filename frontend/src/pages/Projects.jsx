@@ -28,14 +28,14 @@ export default function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects`, getAuthHeader());
       setProjects(res.data);
     } catch (err) { console.error(err); }
   };
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, getAuthHeader());
       setEmployees(res.data);
     } catch (err) { console.error(err); }
   };
@@ -43,7 +43,7 @@ export default function Projects() {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects`, formData, getAuthHeader());
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects`, formData, getAuthHeader());
       setShowModal(false);
       setFormData({ name: '', description: '', startDate: '', endDate: '', status: 'IN_PROGRESS' });
       fetchProjects();
@@ -55,7 +55,7 @@ export default function Projects() {
 
   const handleUpdateStatus = async (projectId, status) => {
     try {
-      await axios.put(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects/${projectId}/status`, { status }, getAuthHeader());
+      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects/${projectId}/status`, { status }, getAuthHeader());
       fetchProjects();
     } catch (err) { console.error(err); alert("Failed to update status"); }
   };
@@ -63,7 +63,7 @@ export default function Projects() {
   const handleAssignEmployee = async (projectId, employeeId) => {
     if (!employeeId) return;
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects/${projectId}/members`, { employeeId }, getAuthHeader());
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects/${projectId}/members`, { employeeId }, getAuthHeader());
       fetchProjects();
       if(showReportModal) fetchReport(projectId);
     } catch (err) { console.error(err); alert("Failed to assign employee"); }
@@ -71,7 +71,7 @@ export default function Projects() {
 
   const fetchReport = async (projectId) => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects/${projectId}/report`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects/${projectId}/report`, getAuthHeader());
       setSelectedProjectReport(res.data);
       setSelectedProjectId(projectId);
       setShowReportModal(true);

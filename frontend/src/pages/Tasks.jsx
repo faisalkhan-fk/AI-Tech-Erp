@@ -31,28 +31,28 @@ export default function Tasks() {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks`, getAuthHeader());
       setTasks(res.data);
     } catch (err) { console.error(err); }
   };
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, getAuthHeader());
       setEmployees(res.data);
     } catch (err) { console.error(err); }
   };
 
   const fetchComments = async (taskId) => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${taskId}/comments`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${taskId}/comments`, getAuthHeader());
       setComments(res.data);
     } catch (err) { console.error(err); }
   };
 
   const fetchAttachments = async (taskId) => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${taskId}/attachments`, getAuthHeader());
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${taskId}/attachments`, getAuthHeader());
       setAttachments(res.data);
     } catch (err) { console.error(err); }
   };
@@ -60,7 +60,7 @@ export default function Tasks() {
   const handleCreateTask = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks`, formData, getAuthHeader());
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks`, formData, getAuthHeader());
       setShowCreateModal(false);
       setFormData({ title: '', description: '', priority: 'HIGH', dueDate: '', status: 'TODO' });
       fetchTasks();
@@ -79,7 +79,7 @@ export default function Tasks() {
 
   const handleUpdateStatus = async (status) => {
     try {
-      await axios.put(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/status`, { status }, getAuthHeader());
+      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/status`, { status }, getAuthHeader());
       fetchTasks();
       setSelectedTask({...selectedTask, status});
     } catch (err) { console.error(err); }
@@ -87,7 +87,7 @@ export default function Tasks() {
 
   const handleAssignTask = async (employeeId) => {
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/assign`, { employeeId }, getAuthHeader());
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/assign`, { employeeId }, getAuthHeader());
       fetchTasks();
       const emp = employees.find(e => e.id.toString() === employeeId.toString());
       setSelectedTask({...selectedTask, assignedTo: emp});
@@ -97,7 +97,7 @@ export default function Tasks() {
   const handleAddComment = async () => {
     if(!commentText.trim()) return;
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/comments`, { content: commentText, authorId: user.id }, getAuthHeader());
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/comments`, { content: commentText, authorId: user.id }, getAuthHeader());
       setCommentText('');
       fetchComments(selectedTask.id);
     } catch (err) { console.error(err); }
@@ -109,7 +109,7 @@ export default function Tasks() {
     const formDataObj = new FormData();
     formDataObj.append('file', file);
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/attachments`, formDataObj, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks/${selectedTask.id}/attachments`, formDataObj, {
         headers: { ...getAuthHeader().headers, 'Content-Type': 'multipart/form-data' }
       });
       fetchAttachments(selectedTask.id);
@@ -222,7 +222,7 @@ export default function Tasks() {
                   <h3 className="text-lg font-semibold mb-2">Attachments</h3>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {attachments.map(att => (
-                      <a key={att.id} href={`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/${att.filePath}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 text-sm text-blue-600">
+                      <a key={att.id} href={`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/${att.filePath}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 text-sm text-blue-600">
                         📄 {att.fileName}
                       </a>
                     ))}

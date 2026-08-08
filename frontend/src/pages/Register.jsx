@@ -15,7 +15,7 @@ export default function Register() {
     setError('');
     setSuccess('');
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/signup`, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/signup`, {
         username,
         password,
         role: [role]
