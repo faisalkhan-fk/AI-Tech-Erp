@@ -13,7 +13,7 @@ export default function ForgotPassword() {
     setError('');
     setMessage('');
     try {
-      const res = await axios.post('http://localhost:8081/api/auth/forgot-password', { username });
+      const res = await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/forgot-password`, { username });
       setMessage(res.data.message);
       setTimeout(() => {
         navigate('/reset-password', { state: { username } });

@@ -15,7 +15,7 @@ export default function ResetPassword() {
     setError('');
     setMessage('');
     try {
-      const res = await axios.post('http://localhost:8081/api/auth/reset-password', { username, newPassword });
+      const res = await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/reset-password`, { username, newPassword });
       setMessage(res.data.message);
       setTimeout(() => {
         navigate('/login');

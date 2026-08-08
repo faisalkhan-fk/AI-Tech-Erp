@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('http://localhost:8081/api/auth/signin', { username, password });
+      const res = await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/signin`, { username, password });
       localStorage.setItem('user', JSON.stringify(res.data));
       navigate('/dashboard');
     } catch (err) {

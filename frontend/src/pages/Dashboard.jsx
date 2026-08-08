@@ -30,10 +30,10 @@ export default function Dashboard() {
     try {
       const header = getAuthHeader();
       const [empRes, projRes, taskRes, attRes] = await Promise.allSettled([
-        axios.get('http://localhost:8081/api/employees', header),
-        axios.get('http://localhost:8081/api/projects', header),
-        axios.get('http://localhost:8081/api/tasks', header),
-        axios.get('http://localhost:8081/api/attendance', header)
+        axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, header),
+        axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/projects`, header),
+        axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/tasks`, header),
+        axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance`, header)
       ]);
 
       const employees = empRes.status === 'fulfilled' && Array.isArray(empRes.value.data) ? empRes.value.data : [];

@@ -19,7 +19,7 @@ export default function AI() {
   const generateReport = async () => {
     setLoadingReport(true);
     try {
-      const res = await axios.get('http://localhost:8081/api/ai/report', getAuthHeader());
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/ai/report`, getAuthHeader());
       setReport(res.data.report);
     } catch (err) { 
       console.error(err);
@@ -33,7 +33,7 @@ export default function AI() {
     e.preventDefault();
     setLoadingChat(true);
     try {
-      const res = await axios.post('http://localhost:8081/api/ai/chat', { query: chatQuery }, getAuthHeader());
+      const res = await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/ai/chat`, { query: chatQuery }, getAuthHeader());
       setChatResponse(res.data.response);
     } catch (err) { 
       console.error(err);

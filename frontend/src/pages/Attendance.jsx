@@ -39,7 +39,7 @@ export default function Attendance() {
 
   const fetchEmployeesList = async () => {
     try {
-      const res = await axios.get('http://localhost:8081/api/employees', getAuthHeader());
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, getAuthHeader());
       setEmployeesList(res.data);
     } catch (err) {
       console.error(err);
@@ -54,7 +54,7 @@ export default function Attendance() {
 
   const fetchAttendance = async () => {
     try {
-      const res = await axios.get('http://localhost:8081/api/attendance', getAuthHeader());
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance`, getAuthHeader());
       setAttendance(res.data);
     } catch (err) {
       console.error(err);
@@ -67,7 +67,7 @@ export default function Attendance() {
       let payload = { ...adminFormData };
       if (!payload.checkIn) delete payload.checkIn;
       if (!payload.checkOut) delete payload.checkOut;
-      await axios.post('http://localhost:8081/api/attendance/admin/mark', payload, getAuthHeader());
+      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance/admin/mark`, payload, getAuthHeader());
       setShowAdminModal(false);
       fetchAttendance();
       alert('Attendance record updated successfully');
@@ -78,7 +78,7 @@ export default function Attendance() {
 
   const handleCheckIn = async () => {
     try {
-      await axios.post('http://localhost:8081/api/attendance/checkin', {}, getAuthHeader());
+      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance/checkin`, {}, getAuthHeader());
       fetchAttendance();
     } catch (err) {
       if (err.response && err.response.data) {
@@ -91,7 +91,7 @@ export default function Attendance() {
 
   const handleCheckOut = async (id) => {
     try {
-      await axios.post(`http://localhost:8081/api/attendance/checkout/${id}`, {}, getAuthHeader());
+      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance/checkout/${id}`, {}, getAuthHeader());
       fetchAttendance();
     } catch (err) {
       console.error("Check-out failed", err);

@@ -33,7 +33,7 @@ export default function Navbar() {
 
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get('http://localhost:8081/api/notifications', getAuthHeader());
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/notifications`, getAuthHeader());
       setNotifications(res.data);
     } catch (err) {
       console.error("Failed to fetch notifications", err);
@@ -42,7 +42,7 @@ export default function Navbar() {
 
   const triggerReminders = async () => {
     try {
-      await axios.post('http://localhost:8081/api/notifications/reminders', {}, getAuthHeader());
+      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/notifications/reminders`, {}, getAuthHeader());
       // Re-fetch in case reminders were generated
       setTimeout(fetchNotifications, 500);
     } catch (err) {
@@ -52,7 +52,7 @@ export default function Navbar() {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put(`http://localhost:8081/api/notifications/${id}/read`, {}, getAuthHeader());
+      await axios.put(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/notifications/${id}/read`, {}, getAuthHeader());
       fetchNotifications(); // Refresh list
     } catch (err) {
       console.error("Failed to mark as read", err);

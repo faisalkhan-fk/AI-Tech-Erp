@@ -34,7 +34,7 @@ export default function Leaves() {
 
   const fetchBalance = async (employeeId) => {
     try {
-      const res = await axios.get(`http://localhost:8081/api/leaves/balance/${employeeId}`, getAuthHeader());
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/leaves/balance/${employeeId}`, getAuthHeader());
       setBalance(res.data);
     } catch (err) {
       console.error('Balance fetch error', err);
@@ -43,7 +43,7 @@ export default function Leaves() {
 
   const fetchLeaves = async () => {
     try {
-      const res = await axios.get('http://localhost:8081/api/leaves', getAuthHeader());
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/leaves`, getAuthHeader());
       setLeaves(res.data);
     } catch (err) { console.error(err); }
   };
@@ -51,7 +51,7 @@ export default function Leaves() {
   const handleApplyLeave = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8081/api/leaves', formData, getAuthHeader());
+      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/leaves`, formData, getAuthHeader());
       setShowModal(false);
       setFormData({ type: 'CASUAL', startDate: '', endDate: '', reason: '' });
       fetchLeaves();
@@ -62,7 +62,7 @@ export default function Leaves() {
 
   const handleApprove = async (id) => {
     try {
-      await axios.put(`http://localhost:8081/api/leaves/${id}/approve`, {}, getAuthHeader());
+      await axios.put(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/leaves/${id}/approve`, {}, getAuthHeader());
       fetchLeaves();
     } catch (err) {
       console.error(err);
@@ -71,7 +71,7 @@ export default function Leaves() {
 
   const handleReject = async (id) => {
     try {
-      await axios.put(`http://localhost:8081/api/leaves/${id}/reject`, {}, getAuthHeader());
+      await axios.put(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/leaves/${id}/reject`, {}, getAuthHeader());
       fetchLeaves();
     } catch (err) {
       console.error(err);

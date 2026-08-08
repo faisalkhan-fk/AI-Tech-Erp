@@ -36,7 +36,7 @@ export default function Employees() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get('http://localhost:8081/api/employees', getAuthHeader());
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, getAuthHeader());
       setEmployees(res.data);
     } catch (err) {
       console.error(err);
@@ -57,7 +57,7 @@ export default function Employees() {
   const handleAddEmployee = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8081/api/employees', formData, getAuthHeader());
+      await axios.post(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees`, formData, getAuthHeader());
       setShowAddModal(false);
       resetForm();
       fetchEmployees();
@@ -69,7 +69,7 @@ export default function Employees() {
   const handleUpdateEmployee = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8081/api/employees/${selectedEmployee.id}`, formData, getAuthHeader());
+      await axios.put(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees/${selectedEmployee.id}`, formData, getAuthHeader());
       setShowEditModal(false);
       resetForm();
       fetchEmployees();
@@ -81,7 +81,7 @@ export default function Employees() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
       try {
-        await axios.delete(`http://localhost:8081/api/employees/${id}`, getAuthHeader());
+        await axios.delete(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees/${id}`, getAuthHeader());
         fetchEmployees();
       } catch (err) {
         console.error(err);
@@ -92,7 +92,7 @@ export default function Employees() {
   const handleApprove = async (id) => {
     if (window.confirm('Approve this user for login access?')) {
       try {
-        await axios.put(`http://localhost:8081/api/employees/${id}/approve`, {}, getAuthHeader());
+        await axios.put(`\${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees/${id}/approve`, {}, getAuthHeader());
         fetchEmployees();
         alert('User approved successfully!');
       } catch (err) {
