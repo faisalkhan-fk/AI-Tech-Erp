@@ -55,7 +55,9 @@ export default function Attendance() {
   const fetchAttendance = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance`, getAuthHeader());
-      setAttendance(res.data);
+      // Sort so newest records appear at the top
+      const sortedData = res.data.sort((a, b) => b.id - a.id);
+      setAttendance(sortedData);
     } catch (err) {
       console.error(err);
     }
@@ -80,6 +82,7 @@ export default function Attendance() {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance/checkin`, {}, getAuthHeader());
       fetchAttendance();
+      alert('Checked in successfully!');
     } catch (err) {
       if (err.response && err.response.data) {
         alert(err.response.data);
@@ -93,6 +96,7 @@ export default function Attendance() {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/attendance/checkout/${id}`, {}, getAuthHeader());
       fetchAttendance();
+      alert('Checked out successfully!');
     } catch (err) {
       console.error("Check-out failed", err);
     }

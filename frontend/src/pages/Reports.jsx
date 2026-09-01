@@ -1,16 +1,102 @@
 import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import axios from 'axios';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+
+const getAuthHeader = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  return { headers: { Authorization: `Bearer ${user?.token}` } };
+};
 
 export default function Reports() {
   const [downloadMsg, setDownloadMsg] = useState('');
 
-  const handleExport = (type, format) => {
-    setDownloadMsg(`Downloading ${type} report in ${format} format...`);
-    setTimeout(() => {
+  const exportData = (data, head, filename, format) => {
+    if (format === 'PDF') {
+      const doc = new jsPDF();
+      doc.text(filename.replace(/_/g, ' '), 14, 15);
+      doc.autoTable({
+        head: head,
+        body: data,
+        startY: 20
+      });
+      doc.save(`${filename}.pdf`);
+    } else if (format === 'Excel' || format === 'CSV') {
+      const ws = XLSX.utils.aoa_to_sheet([...head, ...data]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Report");
+      const extension = format === 'Excel' ? 'xlsx' : 'csv';
+      XLSX.writeFile(wb, `${filename}.${extension}`);
+    }
+  };
+
+  const handleExport = async (type, format) => {
+    setDownloadMsg(`Generating ${type} report in ${format} format...`);
+    try {
+      if (type === 'Attendance') {
+        const res = await axios.get(`${API_URL}/api/attendance`, getAuthHeader());
+        const data = res.data.map(item => [
+          item.date,
+          item.employee ? `${item.employee.firstName} ${item.employee.lastName}` : 'Unknown',
+          item.checkIn ? item.checkIn.substring(0, 5) : '-',
+          item.checkOut ? item.checkOut.substring(0, 5) : '-',
+          item.workingHours ? item.workingHours.toFixed(2) : '-',
+          item.status
+        ]);
+        const head = [['Date', 'Employee', 'Check-In', 'Check-Out', 'Hours', 'Status']];
+        exportData(data, head, 'Monthly_Attendance_Report', format);
+      } 
+      else if (type === 'Performance') {
+        const [empRes, taskRes] = await Promise.all([
+          axios.get(`${API_URL}/api/employees`, getAuthHeader()),
+          axios.get(`${API_URL}/api/tasks`, getAuthHeader())
+        ]);
+        
+        const employees = empRes.data;
+        const tasks = taskRes.data;
+        
+        const data = employees.map(emp => {
+          const empTasks = tasks.filter(t => t.assignees && t.assignees.some(a => a.id === emp.id));
+          const total = empTasks.length;
+          const completed = empTasks.filter(t => t.status === 'COMPLETED').length;
+          const pending = empTasks.filter(t => t.status === 'TODO' || t.status === 'IN_PROGRESS').length;
+          const rate = total > 0 ? ((completed/total)*100).toFixed(0) + '%' : '0%';
+          return [
+            `${emp.firstName} ${emp.lastName}`,
+            emp.department ? emp.department.name : '-',
+            total,
+            completed,
+            pending,
+            rate
+          ];
+        });
+        const head = [['Employee Name', 'Department', 'Total Tasks', 'Completed', 'Pending', 'Completion Rate']];
+        exportData(data, head, 'Employee_Performance_Report', format);
+      }
+      else if (type === 'Payroll') {
+        const res = await axios.get(`${API_URL}/api/leaves`, getAuthHeader());
+        const data = res.data.map(item => [
+          item.employee ? `${item.employee.firstName} ${item.employee.lastName}` : 'Unknown',
+          item.type,
+          item.startDate,
+          item.endDate,
+          item.status
+        ]);
+        const head = [['Employee Name', 'Leave Type', 'Start Date', 'End Date', 'Status']];
+        exportData(data, head, 'Leaves_Payroll_Summary', format);
+      }
       setDownloadMsg(`Successfully exported ${type} report!`);
       setTimeout(() => setDownloadMsg(''), 3000);
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+      setDownloadMsg(`Error exporting ${type} report.`);
+      setTimeout(() => setDownloadMsg(''), 3000);
+    }
   };
 
   return (
