@@ -3,7 +3,7 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
@@ -20,7 +20,7 @@ export default function Reports() {
     if (format === 'PDF') {
       const doc = new jsPDF();
       doc.text(filename.replace(/_/g, ' '), 14, 15);
-      doc.autoTable({
+      autoTable(doc, {
         head: head,
         body: data,
         startY: 20
