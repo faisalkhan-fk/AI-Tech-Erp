@@ -10,7 +10,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 
 const getAuthHeader = () => {
   const user = JSON.parse(localStorage.getItem('user'));
-  return { headers: { Authorization: `Bearer ${user?.token}` } };
+  const token = user?.accessToken || user?.token;
+  return { headers: { Authorization: `Bearer ${token}` } };
 };
 
 export default function Reports() {
