@@ -26,10 +26,23 @@ public class DataInitializer implements CommandLineRunner {
     private com.aitech.erp.repository.EmployeeRepository employeeRepository;
 
     @Autowired
+    private com.aitech.erp.repository.DepartmentRepository departmentRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+        // Initialize Departments if not present
+        if (departmentRepository.count() == 0) {
+            String[] defaultDepts = {"Software Development", "AI & ML", "HR", "Quality Assurance", "Marketing", "Sales", "Operations"};
+            for (String deptName : defaultDepts) {
+                com.aitech.erp.models.Department dept = new com.aitech.erp.models.Department();
+                dept.setName(deptName);
+                departmentRepository.save(dept);
+            }
+            System.out.println("Default Departments created.");
+        }
         // Initialize Roles if not present
         Role empRole = roleRepository.findByName(ERole.ROLE_EMPLOYEE).orElseGet(() -> {
             Role r = new Role();

@@ -14,6 +14,7 @@ export default function Register() {
   const [departmentId, setDepartmentId] = useState('');
   
   const [departments, setDepartments] = useState([]);
+  const [loadingDepts, setLoadingDepts] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -31,6 +32,8 @@ export default function Register() {
         }
       } catch (err) {
         console.error("Failed to fetch departments", err);
+      } finally {
+        setLoadingDepts(false);
       }
     };
     fetchDepartments();
@@ -184,10 +187,15 @@ export default function Register() {
                   value={departmentId}
                   onChange={e => setDepartmentId(e.target.value)}
                 >
-                  {departments.length === 0 && <option value="">Loading...</option>}
-                  {departments.map(dept => (
-                    <option key={dept.id} value={dept.id}>{dept.name}</option>
-                  ))}
+                  {loadingDepts ? (
+                    <option value="">Loading...</option>
+                  ) : departments.length === 0 ? (
+                    <option value="">No Departments</option>
+                  ) : (
+                    departments.map(dept => (
+                      <option key={dept.id} value={dept.id}>{dept.name}</option>
+                    ))
+                  )}
                 </select>
               </div>
               <div>
