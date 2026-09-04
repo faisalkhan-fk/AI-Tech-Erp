@@ -110,9 +110,18 @@ public class AuthController {
     // Auto-create Employee profile
     com.aitech.erp.models.Employee emp = new com.aitech.erp.models.Employee();
     emp.setUser(savedUser);
-    emp.setFirstName(signUpRequest.getUsername());
-    emp.setLastName("");
-    emp.setEmail(signUpRequest.getUsername() + "@example.com");
+    emp.setFirstName(signUpRequest.getFirstName());
+    emp.setLastName(signUpRequest.getLastName());
+    emp.setEmail(signUpRequest.getEmail());
+    emp.setPhone(signUpRequest.getPhone());
+    emp.setDesignation(signUpRequest.getDesignation());
+    
+    if (signUpRequest.getDepartmentId() != null) {
+      com.aitech.erp.models.Department dept = new com.aitech.erp.models.Department();
+      dept.setId(signUpRequest.getDepartmentId());
+      emp.setDepartment(dept);
+    }
+    
     employeeRepository.save(emp);
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully! Pending Admin approval."));
