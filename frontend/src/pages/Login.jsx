@@ -105,6 +105,7 @@ export default function Login() {
                         onChange={(e) => setUsername(e.target.value)}
                         required
                         disabled={loading}
+                        tabIndex={1}
                     />
 
                     <div className="flex justify-between items-center mb-1">
@@ -115,6 +116,7 @@ export default function Login() {
                         <Link
                             to="/forgot-password"
                             className="text-xs text-primary font-bold hover:underline"
+                            tabIndex={4}
                         >
                             Forgot Password?
                         </Link>
@@ -128,11 +130,13 @@ export default function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         disabled={loading}
+                        tabIndex={2}
                     />
 
                     <button
                         type="submit"
                         disabled={loading}
+                        tabIndex={3}
                         className={`w-full text-white p-3 rounded font-bold shadow mb-4 transition ${
                             loading
                                 ? 'bg-gray-400 cursor-not-allowed'
@@ -159,6 +163,7 @@ export default function Login() {
 
                     <Link
                         to="/register"
+                        tabIndex={5}
                         className="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded transition shadow-sm"
                     >
                         ➕ Create New Account (Sign Up)
