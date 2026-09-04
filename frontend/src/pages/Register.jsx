@@ -94,7 +94,7 @@ export default function Register() {
 
         <div className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1">Full Name</label>
+            <label className="text-xs font-semibold text-gray-600 block mb-1">Full Name <span className="text-red-500">*</span></label>
             <input 
               className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm" 
               placeholder="e.g. John Doe" 
@@ -106,7 +106,7 @@ export default function Register() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">Username</label>
+              <label className="text-xs font-semibold text-gray-600 block mb-1">Username <span className="text-red-500">*</span></label>
               <input 
                 className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm" 
                 placeholder="Choose a username" 
@@ -117,18 +117,19 @@ export default function Register() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">Phone Number</label>
+              <label className="text-xs font-semibold text-gray-600 block mb-1">Phone Number <span className="text-red-500">*</span></label>
               <input 
                 className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm" 
                 placeholder="e.g. +91 9876543210" 
                 value={phone} 
                 onChange={e => setPhone(e.target.value)} 
+                required
               />
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1">Email Address</label>
+            <label className="text-xs font-semibold text-gray-600 block mb-1">Email Address <span className="text-red-500">*</span></label>
             <input 
               className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm" 
               type="email"
@@ -141,7 +142,7 @@ export default function Register() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">Password</label>
+              <label className="text-xs font-semibold text-gray-600 block mb-1">Password <span className="text-red-500">*</span></label>
               <input 
                 className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm" 
                 type="password" 
@@ -153,7 +154,7 @@ export default function Register() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">Confirm Password</label>
+              <label className="text-xs font-semibold text-gray-600 block mb-1">Confirm Password <span className="text-red-500">*</span></label>
               <input 
                 className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm" 
                 type="password" 
@@ -167,7 +168,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-1">Select Role</label>
+            <label className="text-xs font-semibold text-gray-600 block mb-1">Select Role <span className="text-red-500">*</span></label>
             <select 
               className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm"
               value={role}
