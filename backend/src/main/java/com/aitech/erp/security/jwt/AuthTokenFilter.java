@@ -27,7 +27,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
       String jwt = parseJwt(request);
       if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        Long tokenVersion = jwtUtils.getTokenVersionFromJwtToken(jwt);
+        
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        
+        if (userDetails instanceof com.aitech.erp.security.services.UserDetailsImpl) {
+            com.aitech.erp.security.services.UserDetailsImpl userDetailsImpl = (com.aitech.erp.security.services.UserDetailsImpl) userDetails;
+            if (userDetailsImpl.getTokenVersion() != tokenVersion) {
+                throw new RuntimeException("Token expired due to password reset");
+            }
+        }
+
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
             userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

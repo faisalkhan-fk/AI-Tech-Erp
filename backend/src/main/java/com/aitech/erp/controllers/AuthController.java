@@ -127,26 +127,43 @@ public class AuthController {
     return ResponseEntity.ok(new MessageResponse("User registered successfully! Pending Admin approval."));
   }
 
+  @Autowired
+  com.aitech.erp.services.PasswordResetService passwordResetService;
+
   @PostMapping("/forgot-password")
-  public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
-    String username = request.get("username");
-    if (username == null || !userRepository.existsByUsername(username)) {
-      return ResponseEntity.badRequest().body(new MessageResponse("Error: User with this username does not exist!"));
+  public ResponseEntity<?> forgotPassword(@Valid @RequestBody com.aitech.erp.payload.request.ForgotPasswordRequest request) {
+    try {
+      passwordResetService.generateAndSendOtp(request.getEmail());
+    } catch (Exception e) {
+      // Ignore exceptions to prevent enumeration, or return generic message if rate limited
+      if (e.getMessage().contains("Please wait")) {
+        return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+      }
     }
-    return ResponseEntity.ok(new MessageResponse("Password reset code generated! You can now proceed to reset password."));
+    return ResponseEntity.ok(new MessageResponse("If an account exists with this email, an OTP has been sent."));
+  }
+
+  @PostMapping("/verify-otp")
+  public ResponseEntity<?> verifyOtp(@Valid @RequestBody com.aitech.erp.payload.request.VerifyOtpRequest request) {
+    try {
+      passwordResetService.verifyOtp(request.getEmail(), request.getOtp());
+      return ResponseEntity.ok(new MessageResponse("OTP verified successfully. You can now reset your password."));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+    }
   }
 
   @PostMapping("/reset-password")
-  public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
-    String username = request.get("username");
-    String newPassword = request.get("newPassword");
-    if (username == null || newPassword == null || newPassword.length() < 6) {
-      return ResponseEntity.badRequest().body(new MessageResponse("Error: Invalid username or password (min 6 characters required)."));
+  public ResponseEntity<?> resetPassword(@Valid @RequestBody com.aitech.erp.payload.request.ResetPasswordRequest request) {
+    if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+      return ResponseEntity.badRequest().body(new MessageResponse("Passwords do not match."));
     }
-    return userRepository.findByUsername(username).map(user -> {
-      user.setPassword(encoder.encode(newPassword));
-      userRepository.save(user);
+    
+    try {
+      passwordResetService.resetPassword(request.getEmail(), request.getNewPassword());
       return ResponseEntity.ok(new MessageResponse("Password reset successfully! You can now log in."));
-    }).orElse(ResponseEntity.badRequest().body(new MessageResponse("Error: User not found.")));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+    }
   }
 }

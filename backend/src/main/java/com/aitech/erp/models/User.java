@@ -37,6 +37,9 @@ public class User {
 
   private boolean isApproved = false;
 
+  @Column(nullable = false)
+  private long tokenVersion = 0L;
+
   public User(String username, String password) {
     this.username = username;
     this.password = password;

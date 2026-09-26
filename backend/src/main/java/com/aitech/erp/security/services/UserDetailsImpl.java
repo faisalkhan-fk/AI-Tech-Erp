@@ -17,13 +17,14 @@ public class UserDetailsImpl implements UserDetails {
   private String username;
   @JsonIgnore
   private String password;
+  private long tokenVersion;
   private Collection<? extends GrantedAuthority> authorities;
 
   public static UserDetailsImpl build(User user) {
     List<GrantedAuthority> authorities = user.getRoles().stream()
         .map(role -> new SimpleGrantedAuthority(role.getName().name()))
         .collect(Collectors.toList());
-    return new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(), authorities);
+    return new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(), user.getTokenVersion(), authorities);
   }
 
   @Override
