@@ -134,11 +134,14 @@ public class AuthController {
   public ResponseEntity<?> forgotPassword(@Valid @RequestBody com.aitech.erp.payload.request.ForgotPasswordRequest request) {
     try {
       passwordResetService.generateAndSendOtp(request.getEmail());
+    } catch (org.springframework.mail.MailException e) {
+      System.err.println("Mail Error: " + e.getMessage());
+      return ResponseEntity.internalServerError().body(new MessageResponse("Server error: Failed to send email. Please check SMTP configuration."));
     } catch (Exception e) {
-      // Ignore exceptions to prevent enumeration, or return generic message if rate limited
-      if (e.getMessage().contains("Please wait")) {
+      if (e.getMessage() != null && e.getMessage().contains("Please wait")) {
         return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
       }
+      System.err.println("Forgot Password Error: " + e.getMessage());
     }
     return ResponseEntity.ok(new MessageResponse("If an account exists with this email, an OTP has been sent."));
   }
