@@ -26,7 +26,10 @@ export default function Dashboard() {
     fetchDashboardData();
   }, []);
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const fetchDashboardData = async () => {
+    setIsRefreshing(true);
     try {
       const header = getAuthHeader();
       const [empRes, projRes, taskRes, attRes] = await Promise.allSettled([
@@ -50,6 +53,8 @@ export default function Dashboard() {
       });
     } catch (err) {
       console.error('Failed to load dashboard metrics', err);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 500); // Artificial delay to show animation
     }
   };
 
@@ -78,9 +83,11 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
           <button 
             onClick={fetchDashboardData}
-            className="bg-white border text-gray-700 px-3 py-1.5 rounded shadow-sm text-sm hover:bg-gray-100 font-semibold flex items-center gap-1"
+            disabled={isRefreshing}
+            className={`bg-white border text-gray-700 px-3 py-1.5 rounded shadow-sm text-sm font-semibold flex items-center gap-1 transition ${isRefreshing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
           >
-            🔄 Refresh Metrics
+            <span className={isRefreshing ? "animate-spin" : ""}>🔄</span>
+            {isRefreshing ? 'Refreshing...' : 'Refresh Metrics'}
           </button>
         </div>
 
