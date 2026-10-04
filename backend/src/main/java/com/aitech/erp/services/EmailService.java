@@ -44,13 +44,16 @@ public class EmailService {
         sendHtmlEmail(toEmail, subject, htmlContent);
     }
 
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
+    private String senderEmail;
+
     private void sendHtmlEmail(String toEmail, String subject, String htmlContent) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
-            // Set the sender name to "AI Tech ERP"
-            helper.setFrom("no-reply@aitecherp.com", "AI Tech ERP");
+            // Set the sender name to "AI Tech ERP" with the actual authenticated email
+            helper.setFrom(senderEmail, "AI Tech ERP");
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
