@@ -59,9 +59,9 @@ public class EmailService {
             helper.setText(htmlContent, true);
 
             mailSender.send(message);
-        } catch (Exception e) {
+        } catch (jakarta.mail.MessagingException | java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
-            System.err.println("Failed to send email to " + toEmail);
+            System.err.println("Failed to construct email for " + toEmail);
         }
     }
 }
