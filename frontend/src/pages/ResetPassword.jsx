@@ -95,6 +95,7 @@ export default function ResetPassword() {
               />
               <button 
                 type="button"
+                tabIndex="-1"
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-600 hover:text-primary"
                 onClick={() => setShowPassword(!showPassword)}
               >
