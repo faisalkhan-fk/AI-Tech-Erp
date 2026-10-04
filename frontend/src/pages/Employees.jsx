@@ -13,6 +13,8 @@ export default function Employees() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '' });
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [formData, setFormData] = useState({
@@ -112,6 +114,19 @@ export default function Employees() {
     }
   };
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (!passwordData.oldPassword || !passwordData.newPassword) return;
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/change-password`, passwordData, getAuthHeader());
+      alert("Password changed successfully!");
+      setShowPasswordForm(false);
+      setPasswordData({ oldPassword: '', newPassword: '' });
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to change password.");
+    }
+  };
+
   const getUserDetails = () => {
     const userStr = localStorage.getItem('user');
     if (!userStr) return null;
@@ -145,12 +160,16 @@ export default function Employees() {
 
   const openProfileModal = (emp) => {
     setSelectedEmployee(emp);
+    setShowPasswordForm(false);
+    setPasswordData({ oldPassword: '', newPassword: '' });
     setShowProfileModal(true);
   };
 
   const resetForm = () => {
     setFormData({ firstName: '', lastName: '', email: '', designation: '', phone: '', profilePic: '', salary: '', role: 'EMPLOYEE' });
     setSelectedEmployee(null);
+    setShowPasswordForm(false);
+    setPasswordData({ oldPassword: '', newPassword: '' });
   };
 
   // Filtered employees list
@@ -329,6 +348,38 @@ export default function Employees() {
                   <Link to={`/salary-slip/${selectedEmployee.id}`} className="block w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700 transition mb-3 text-sm">
                     📄 Download Salary Slip
                   </Link>
+                )}
+
+                {selectedEmployee.user && selectedEmployee.user.id === currentUser?.id && !showPasswordForm && (
+                  <button onClick={() => setShowPasswordForm(true)} className="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 transition mb-3 text-sm">
+                    🔑 Change My Password
+                  </button>
+                )}
+
+                {showPasswordForm && (
+                  <form onSubmit={handleChangePassword} className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4 text-left">
+                    <h3 className="font-bold text-blue-800 text-sm mb-3">Change Password</h3>
+                    <input 
+                      type="password" 
+                      placeholder="Current Password" 
+                      required
+                      className="w-full border p-2 mb-2 rounded text-sm focus:ring-blue-500 focus:border-blue-500"
+                      value={passwordData.oldPassword} 
+                      onChange={e => setPasswordData({...passwordData, oldPassword: e.target.value})} 
+                    />
+                    <input 
+                      type="password" 
+                      placeholder="New Password" 
+                      required
+                      className="w-full border p-2 mb-3 rounded text-sm focus:ring-blue-500 focus:border-blue-500"
+                      value={passwordData.newPassword} 
+                      onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})} 
+                    />
+                    <div className="flex justify-end gap-2">
+                      <button type="button" onClick={() => setShowPasswordForm(false)} className="px-3 py-1.5 border rounded text-xs font-semibold bg-white hover:bg-gray-100">Cancel</button>
+                      <button type="submit" className="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700">Save Password</button>
+                    </div>
+                  </form>
                 )}
 
                 <button onClick={() => setShowProfileModal(false)} className="w-full bg-gray-800 text-white font-bold py-2 rounded hover:bg-gray-900 transition text-sm">
