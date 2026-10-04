@@ -42,12 +42,49 @@ public class EmployeeController {
       if (employeeDetails.getProfilePic() != null) {
         emp.setProfilePic(employeeDetails.getProfilePic());
       }
+      if (employeeDetails.getSalary() != null) {
+        emp.setSalary(employeeDetails.getSalary());
+      }
       return ResponseEntity.ok(employeeRepository.save(emp));
     }).orElse(ResponseEntity.notFound().build());
   }
 
   @Autowired
   com.aitech.erp.repository.UserRepository userRepository;
+
+  @Autowired
+  com.aitech.erp.repository.RoleRepository roleRepository;
+
+  @PutMapping("/{id}/role")
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> updateEmployeeRole(@PathVariable Long id, @RequestBody java.util.Map<String, String> request) {
+      String newRoleStr = request.get("role");
+      if (newRoleStr == null) return ResponseEntity.badRequest().body(new com.aitech.erp.payload.response.MessageResponse("Role is required"));
+      
+      return employeeRepository.findById(id).map(emp -> {
+          if (emp.getUser() != null) {
+              com.aitech.erp.models.User user = emp.getUser();
+              java.util.Set<com.aitech.erp.models.Role> roles = new java.util.HashSet<>();
+              
+              com.aitech.erp.models.ERole eRole;
+              try {
+                  eRole = com.aitech.erp.models.ERole.valueOf("ROLE_" + newRoleStr.toUpperCase());
+              } catch (IllegalArgumentException e) {
+                  return ResponseEntity.badRequest().body(new com.aitech.erp.payload.response.MessageResponse("Invalid role"));
+              }
+              
+              com.aitech.erp.models.Role userRole = roleRepository.findByName(eRole)
+                  .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+              
+              roles.add(userRole);
+              user.setRoles(roles);
+              userRepository.save(user);
+              
+              return ResponseEntity.ok(new com.aitech.erp.payload.response.MessageResponse("Role updated successfully!"));
+          }
+          return ResponseEntity.badRequest().body(new com.aitech.erp.payload.response.MessageResponse("Employee has no associated user account."));
+      }).orElse(ResponseEntity.notFound().build());
+  }
 
   @PutMapping("/{id}/approve")
   @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")

@@ -70,6 +70,16 @@ export default function Employees() {
     e.preventDefault();
     try {
       await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees/${selectedEmployee.id}`, formData, getAuthHeader());
+      
+      // Update role if admin changed it
+      if (formData.role && currentUser?.role === 'ADMIN') {
+        try {
+          await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/employees/${selectedEmployee.id}/role`, { role: formData.role }, getAuthHeader());
+        } catch (roleErr) {
+          console.error("Failed to update role", roleErr);
+        }
+      }
+
       setShowEditModal(false);
       resetForm();
       fetchEmployees();
@@ -113,13 +123,22 @@ export default function Employees() {
 
   const openEditModal = (emp) => {
     setSelectedEmployee(emp);
+    
+    let currentRole = 'EMPLOYEE';
+    if (emp.user && emp.user.roles) {
+      if (emp.user.roles.some(r => r.name === 'ROLE_ADMIN')) currentRole = 'ADMIN';
+      else if (emp.user.roles.some(r => r.name === 'ROLE_MANAGER')) currentRole = 'MANAGER';
+    }
+
     setFormData({
       firstName: emp.firstName || '',
       lastName: emp.lastName || '',
       email: emp.email || '',
       designation: emp.designation || '',
       phone: emp.phone || '',
-      profilePic: emp.profilePic || ''
+      profilePic: emp.profilePic || '',
+      salary: emp.salary || '',
+      role: currentRole
     });
     setShowEditModal(true);
   };
@@ -130,7 +149,7 @@ export default function Employees() {
   };
 
   const resetForm = () => {
-    setFormData({ firstName: '', lastName: '', email: '', designation: '', phone: '', profilePic: '' });
+    setFormData({ firstName: '', lastName: '', email: '', designation: '', phone: '', profilePic: '', salary: '', role: 'EMPLOYEE' });
     setSelectedEmployee(null);
   };
 
@@ -255,6 +274,24 @@ export default function Employees() {
                   <input className="w-full border p-2 mb-3 rounded text-sm" type="email" placeholder="Email Address" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
                   <input className="w-full border p-2 mb-3 rounded text-sm" placeholder="Designation" value={formData.designation} onChange={e => setFormData({...formData, designation: e.target.value})} required />
                   <input className="w-full border p-2 mb-4 rounded text-sm" placeholder="Phone Number" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                  
+                  {currentUser?.role === 'ADMIN' && (
+                    <>
+                      <div className="mb-3">
+                        <label className="text-xs font-semibold text-gray-600">Base Salary (₹)</label>
+                        <input className="w-full border p-2 rounded text-sm" type="number" placeholder="Enter Salary" value={formData.salary || ''} onChange={e => setFormData({...formData, salary: e.target.value})} />
+                      </div>
+                      <div className="mb-4 bg-yellow-50 p-3 rounded border border-yellow-200">
+                        <label className="text-xs font-bold text-yellow-800 block mb-1">Change System Role (Admin Only)</label>
+                        <select className="w-full border p-2 rounded text-sm focus:ring-yellow-500" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
+                          <option value="EMPLOYEE">Employee</option>
+                          <option value="MANAGER">Manager</option>
+                          <option value="ADMIN">Admin</option>
+                        </select>
+                      </div>
+                    </>
+                  )}
+
                   <div className="flex justify-end space-x-2">
                     <button type="button" onClick={() => setShowEditModal(false)} className="px-4 py-2 border rounded text-sm hover:bg-gray-100">Cancel</button>
                     <button type="submit" className="px-4 py-2 bg-blue-600 text-white text-sm rounded font-bold hover:bg-blue-700">Update Employee</button>
@@ -278,14 +315,23 @@ export default function Employees() {
                 <h2 className="text-2xl font-extrabold text-gray-800">{selectedEmployee.firstName} {selectedEmployee.lastName}</h2>
                 <p className="text-primary font-bold text-sm mb-4">{selectedEmployee.designation}</p>
 
-                <div className="bg-gray-50 p-4 rounded-lg text-left text-sm space-y-2 mb-6 border">
+                <div className="bg-gray-50 p-4 rounded-lg text-left text-sm space-y-2 mb-4 border">
                   <div><span className="font-semibold text-gray-500">Employee ID:</span> #{selectedEmployee.id}</div>
                   <div><span className="font-semibold text-gray-500">Email:</span> {selectedEmployee.email}</div>
                   <div><span className="font-semibold text-gray-500">Phone:</span> {selectedEmployee.phone || 'N/A'}</div>
+                  {selectedEmployee.salary > 0 && (currentUser?.role === 'ADMIN' || currentUser?.role === 'MANAGER' || (selectedEmployee.user && selectedEmployee.user.id === currentUser?.id)) && (
+                    <div><span className="font-semibold text-gray-500">Salary:</span> ₹{selectedEmployee.salary}</div>
+                  )}
                   <div><span className="font-semibold text-gray-500">Status:</span> <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full font-bold">ACTIVE</span></div>
                 </div>
 
-                <button onClick={() => setShowProfileModal(false)} className="w-full bg-gray-800 text-white font-bold py-2 rounded hover:bg-gray-900 transition">
+                {selectedEmployee.salary > 0 && (currentUser?.role === 'ADMIN' || currentUser?.role === 'MANAGER' || (selectedEmployee.user && selectedEmployee.user.id === currentUser?.id)) && (
+                  <Link to={`/salary-slip/${selectedEmployee.id}`} className="block w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700 transition mb-3 text-sm">
+                    📄 Download Salary Slip
+                  </Link>
+                )}
+
+                <button onClick={() => setShowProfileModal(false)} className="w-full bg-gray-800 text-white font-bold py-2 rounded hover:bg-gray-900 transition text-sm">
                   Close Profile
                 </button>
               </div>

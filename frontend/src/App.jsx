@@ -7,6 +7,7 @@ import VerifyOtp from './pages/VerifyOtp';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Employees from './pages/Employees';
+import SalarySlip from './pages/SalarySlip';
 import Departments from './pages/Departments';
 import Attendance from './pages/Attendance';
 import Projects from './pages/Projects';
@@ -31,6 +32,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/employees" element={<PrivateRoute><Employees /></PrivateRoute>} />
+        <Route path="/salary-slip/:id" element={<PrivateRoute><SalarySlip /></PrivateRoute>} />
         <Route path="/departments" element={<PrivateRoute><Departments /></PrivateRoute>} />
         <Route path="/attendance" element={<PrivateRoute><Attendance /></PrivateRoute>} />
         <Route path="/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />

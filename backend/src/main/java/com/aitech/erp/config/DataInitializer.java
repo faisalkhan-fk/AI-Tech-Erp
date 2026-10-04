@@ -77,6 +77,7 @@ public class DataInitializer implements CommandLineRunner {
             adminEmp.setFirstName("Super");
             adminEmp.setLastName("Admin");
             adminEmp.setEmail("admin@aitech.com");
+            adminEmp.setSalary(75000.0);
             employeeRepository.save(adminEmp);
         }
 
@@ -95,6 +96,7 @@ public class DataInitializer implements CommandLineRunner {
             defaultEmp.setFirstName("Default");
             defaultEmp.setLastName("Employee");
             defaultEmp.setEmail("employee@aitech.com");
+            defaultEmp.setSalary(45000.0);
             employeeRepository.save(defaultEmp);
         }
     }

@@ -20,4 +20,6 @@ public class Employee {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "department_id")
   private Department department;
+  
+  private Double salary;
 }
