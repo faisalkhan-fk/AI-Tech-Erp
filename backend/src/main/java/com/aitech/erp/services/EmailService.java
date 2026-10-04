@@ -49,14 +49,14 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
-            // Using a generic sender if not explicitly provided
-            helper.setFrom("no-reply@aitecherp.com");
+            // Set the sender name to "AI Tech ERP"
+            helper.setFrom("no-reply@aitecherp.com", "AI Tech ERP");
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
 
             mailSender.send(message);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to send email to " + toEmail);
         }
