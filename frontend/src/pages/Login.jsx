@@ -95,12 +95,12 @@ export default function Login() {
                     )}
 
                     <label className="text-xs font-semibold text-gray-600 block mb-1">
-                        Username
+                        Username or Email
                     </label>
 
                     <input
                         className="w-full border border-gray-300 p-2.5 mb-3 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="Username"
+                        placeholder="Username or Email"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
