@@ -331,6 +331,24 @@ export default function Employees() {
                   </Link>
                 )}
 
+                {selectedEmployee.user && selectedEmployee.user.id === currentUser?.id && (
+                  <button onClick={() => {
+                    const oldPass = prompt("Enter your current password:");
+                    if (!oldPass) return;
+                    const newPass = prompt("Enter your new password:");
+                    if (!newPass) return;
+                    
+                    axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/change-password`, {
+                      oldPassword: oldPass,
+                      newPassword: newPass
+                    }, getAuthHeader())
+                    .then(() => alert("Password changed successfully!"))
+                    .catch(err => alert(err.response?.data?.message || "Failed to change password."));
+                  }} className="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 transition mb-4 text-sm">
+                    🔑 Change My Password
+                  </button>
+                )}
+
                 <button onClick={() => setShowProfileModal(false)} className="w-full bg-gray-800 text-white font-bold py-2 rounded hover:bg-gray-900 transition text-sm">
                   Close Profile
                 </button>

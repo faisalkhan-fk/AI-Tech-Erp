@@ -169,4 +169,28 @@ public class AuthController {
       return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
     }
   }
+
+  @PostMapping("/change-password")
+  public ResponseEntity<?> changePassword(
+      @Valid @RequestBody com.aitech.erp.payload.request.ChangePasswordRequest request,
+      Authentication authentication) {
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return ResponseEntity.status(401).body(new MessageResponse("Error: Unauthorized"));
+    }
+    
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    User user = userRepository.findByUsername(userDetails.getUsername())
+        .orElseThrow(() -> new RuntimeException("Error: User not found."));
+
+    // Verify old password
+    if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
+      return ResponseEntity.badRequest().body(new MessageResponse("Error: Incorrect old password."));
+    }
+
+    // Update with new password
+    user.setPassword(encoder.encode(request.getNewPassword()));
+    userRepository.save(user);
+
+    return ResponseEntity.ok(new MessageResponse("Password changed successfully!"));
+  }
 }
