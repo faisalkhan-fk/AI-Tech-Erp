@@ -47,7 +47,36 @@ public class EmailService {
     @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
     private String senderEmail;
 
+    @org.springframework.beans.factory.annotation.Value("${APP_SCRIPT_EMAIL_URL:}")
+    private String appScriptUrl;
+
     private void sendHtmlEmail(String toEmail, String subject, String htmlContent) {
+        // Fallback for Render Free Tier: If APP_SCRIPT_EMAIL_URL is provided, send via HTTP (bypasses SMTP block)
+        if (appScriptUrl != null && !appScriptUrl.trim().isEmpty()) {
+            try {
+                org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+                
+                java.util.Map<String, String> payload = new java.util.HashMap<>();
+                payload.put("to", toEmail);
+                payload.put("subject", subject);
+                payload.put("html", htmlContent);
+                payload.put("name", "AI Tech ERP");
+                
+                org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+                headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+                
+                org.springframework.http.HttpEntity<java.util.Map<String, String>> request = new org.springframework.http.HttpEntity<>(payload, headers);
+                
+                org.springframework.http.ResponseEntity<String> response = restTemplate.postForEntity(appScriptUrl, request, String.class);
+                System.out.println("Email sent via App Script: " + response.getBody());
+                return; // Exit after successful HTTP send
+            } catch (Exception e) {
+                System.err.println("Failed to send email via App Script API: " + e.getMessage());
+                throw new org.springframework.mail.MailSendException("App Script Email Failed: " + e.getMessage());
+            }
+        }
+
+        // Default local behavior: Send via standard SMTP
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
