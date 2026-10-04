@@ -145,6 +145,21 @@ export default function Navbar() {
             {getRoleBadge(user.roles)}
           </div>
         )}
+        <button onClick={() => {
+          const oldPass = prompt("Enter your current password:");
+          if (!oldPass) return;
+          const newPass = prompt("Enter your new password:");
+          if (!newPass) return;
+          
+          axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/auth/change-password`, {
+            oldPassword: oldPass,
+            newPassword: newPass
+          }, getAuthHeader())
+          .then(() => alert("Password changed successfully!"))
+          .catch(err => alert(err.response?.data?.message || "Failed to change password."));
+        }} className="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-bold px-4 py-2 rounded shadow">
+          🔑 Change Password
+        </button>
         <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 transition text-white text-sm font-bold px-4 py-2 rounded shadow">
           Logout
         </button>
