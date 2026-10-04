@@ -136,7 +136,7 @@ public class AuthController {
       passwordResetService.generateAndSendOtp(request.getEmail());
     } catch (org.springframework.mail.MailException e) {
       System.err.println("Mail Error: " + e.getMessage());
-      return ResponseEntity.internalServerError().body(new MessageResponse("Server error: Failed to send email. Please check SMTP configuration."));
+      return ResponseEntity.internalServerError().body(new MessageResponse("SMTP Error: " + e.getMessage()));
     } catch (Exception e) {
       if (e.getMessage() != null && e.getMessage().contains("Please wait")) {
         return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
